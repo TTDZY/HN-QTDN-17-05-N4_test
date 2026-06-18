@@ -58,6 +58,11 @@
           parent="menu_root"
           action="action_phieu_luong"
           sequence="4"/>
+        <menuitem id="menu_ky_luat"
+          name="Quản lý kỷ luật"
+          parent="menu_root"
+          action="action_ky_luat"
+          sequence="4"/>
 
     </data>
 </odoo>

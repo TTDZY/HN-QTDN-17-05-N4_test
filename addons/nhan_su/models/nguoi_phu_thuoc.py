@@ -35,15 +35,14 @@ class NguoiPhuThuoc(models.Model):
 
     dang_hieu_luc = fields.Boolean(
         "Đang được giảm trừ",
-        compute="_compute_dang_hieu_luc",
-        store=True
+        compute="_compute_dang_hieu_luc"
     )
 
     ghi_chu = fields.Text("Ghi chú")
 
     @api.depends('ngay_bat_dau_giam_tru', 'ngay_ket_thuc_giam_tru')
     def _compute_dang_hieu_luc(self):
-        today = fields.Date.today()
+        today = fields.Date.context_today(self)
         for rec in self:
             # Mặc định là KHÔNG hiệu lực
             rec.dang_hieu_luc = False

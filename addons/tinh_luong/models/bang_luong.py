@@ -4,6 +4,7 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime, time, timedelta,date
 from pytz import timezone, UTC
 from calendar import monthrange
+from odoo.exceptions import ValidationError
 
 # Trong module tinh_luong/models/bang_luong.py
 
@@ -11,6 +12,7 @@ class NhanVienInheritSalary(models.Model):
     _inherit = 'nhan_vien'
 
     luong_ids = fields.One2many('bang_luong', 'nhan_vien_id', string='Lịch sử lương')
+    tien_thuong_ids = fields.One2many('tien_thuong', 'nhan_vien_id', string='Lịch sử khen thưởng')
 
 class BangLuong(models.Model):
     _name = 'bang_luong'
@@ -37,6 +39,12 @@ class BangLuong(models.Model):
         store=True,
         readonly=True
     )
+    tien_ky_luat = fields.Float(
+        string='Khấu trừ kỷ luật',
+        compute='_compute_tien_ky_luat',
+        store=True,
+        readonly=True,
+    )
 
     tien_bh_ca_nhan = fields.Float(
         string="BH cá nhân",
@@ -61,6 +69,7 @@ class BangLuong(models.Model):
 
     # --- OUTPUT TÍNH LƯƠNG ---
     luong_ngay = fields.Float("Lương 1 ngày", compute="_compute_luong_final", store=True)
+    luong_theo_cong = fields.Float("Lương theo ngày công", compute="_compute_luong_final", store=True)
     tien_phat = fields.Float("Tiền phạt", compute="_compute_luong_final", store=True)
     tong_luong = fields.Float("Thực lĩnh", compute="_compute_luong_final", store=True)
     tien_tang_ca = fields.Float("Tiền tăng ca (x2)", compute="_compute_luong_final", store=True)
@@ -82,6 +91,14 @@ class BangLuong(models.Model):
         ('unique_payroll_month', 'unique(nhan_vien_id, thang, nam)', 'Nhân viên này đã được tính lương cho tháng này rồi!')
     ]
 
+    @api.constrains('thang', 'nam')
+    def _check_period(self):
+        for rec in self:
+            if rec.thang < 1 or rec.thang > 12:
+                raise ValidationError("Tháng tính lương phải nằm trong khoảng 1 đến 12.")
+            if rec.nam < 2000:
+                raise ValidationError("Năm tính lương không hợp lệ.")
+
     @api.depends('nhan_vien_id', 'thang', 'nam')
     def _compute_tien_thuong(self):
         for rec in self:
@@ -92,7 +109,7 @@ class BangLuong(models.Model):
                 continue
 
             domain = [
-                ('trang_thai', '=', 'da_duyet'),
+                ('trang_thai', 'in', ['da_duyet', 'da_chi']),
                 ('cong_vao_luong', '=', True),
                 ('thang', '=', rec.thang),
                 ('nam', '=', rec.nam),
@@ -109,6 +126,21 @@ class BangLuong(models.Model):
                 tong_thuong += thuong.so_tien
 
             rec.tien_thuong = tong_thuong
+
+    @api.depends('nhan_vien_id', 'thang', 'nam')
+    def _compute_tien_ky_luat(self):
+        for rec in self:
+            if not rec.nhan_vien_id:
+                rec.tien_ky_luat = 0
+                continue
+            decisions = self.env['ky_luat'].search([
+                ('nhan_vien_id', '=', rec.nhan_vien_id.id),
+                ('thang', '=', rec.thang),
+                ('nam', '=', rec.nam),
+                ('anh_huong_luong', '=', True),
+                ('trang_thai', 'in', ['da_duyet', 'da_ap_dung']),
+            ])
+            rec.tien_ky_luat = sum(decisions.mapped('so_tien'))
 
 
     @api.depends('nhan_vien_id', 'thang', 'nam')
@@ -189,6 +221,7 @@ class BangLuong(models.Model):
         'tong_phut_ve_som',
         'tong_gio_tang_ca',
         'tien_thuong',
+        'tien_ky_luat',
         'thue_id'
     )
     def _compute_luong_final(self):
@@ -213,6 +246,7 @@ class BangLuong(models.Model):
 
             # 3. Lương theo công
             luong_theo_cong = luong_1_ngay * rec.so_ngay_di_lam
+            rec.luong_theo_cong = luong_theo_cong
             
             # 3.5 . Bảo hiểm
             rec.tien_bh_ca_nhan = (
@@ -236,8 +270,8 @@ class BangLuong(models.Model):
                 luong_theo_cong +
                 rec.tien_tang_ca +
                 rec.tien_thuong +
-                (rec.phu_cap or 0) -
                 rec.tien_phat -
+                rec.tien_ky_luat -
                 rec.tien_bh_ca_nhan -
                 rec.tien_bh_xa_hoi
             )
@@ -293,8 +327,8 @@ class BangLuong(models.Model):
     def cron_tao_bang_luong_thang(self):
         today = fields.Date.today()
 
-        # if today.day != 1:
-        #     return
+        if today.day != 1:
+            return
 
         # ✅ Lấy tháng trước
         thang_truoc = today - relativedelta(months=1)
@@ -329,4 +363,3 @@ class BangLuong(models.Model):
             # ❌ Nếu không có ngày công thì bỏ
             if bang_luong.so_ngay_di_lam <= 0:
                 bang_luong.unlink()
-

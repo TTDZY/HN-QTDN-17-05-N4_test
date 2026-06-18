@@ -8,6 +8,12 @@
                 <page string="Danh sách lương">
                     <field name="luong_ids"/>
                 </page>
+                <page string="Khen thưởng">
+                    <field name="tien_thuong_ids"/>
+                </page>
+                <page string="Kỷ luật">
+                    <field name="ky_luat_ids"/>
+                </page>
             </xpath>
         </field>
     </record>

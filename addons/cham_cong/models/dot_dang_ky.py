@@ -26,8 +26,7 @@ class DotDangKy(models.Model):
             ("Đã đóng", "Đã đóng")
         ],
         string="Trạng thái đăng ký",
-        compute="_compute_trang_thai_dang_ky",
-        store=True
+        compute="_compute_trang_thai_dang_ky"
     )
     trang_thai_ap_dung = fields.Selection(
         [
@@ -36,21 +35,20 @@ class DotDangKy(models.Model):
             ("Chưa áp dụng", "Chưa áp dụng")
         ],
         string="Trạng thái áp dụng",
-        compute="_compute_trang_thai_ap_dung",
-        store=True
+        compute="_compute_trang_thai_ap_dung"
     )
     dang_ky_ca_lam_theo_ngay_ids = fields.One2many('dang_ky_ca_lam_theo_ngay', inverse_name='dot_dang_ky_id', string="Đăng ký ca làm")
 
     def _compute_nhan_vien(self):
         for record in self:
             record.nhan_vien_ids = self.env['nhan_vien'].search([
-                ('phong_ban_id', '!=', False),
-                ('chuc_vu_id', '!=', False)
+                ('active', '=', True),
+                ('hop_dong_hien_tai_id', '!=', False),
             ])
             
     @api.depends('han_dang_ky')
     def _compute_trang_thai_dang_ky(self):
-        today = date.today()
+        today = fields.Date.context_today(self)
         for record in self:
             if record.han_dang_ky and today > record.han_dang_ky:
                 record.trang_thai_dang_ky = "Đã hết hạn"
@@ -59,11 +57,11 @@ class DotDangKy(models.Model):
     
     @api.depends('ngay_bat_dau', 'ngay_ket_thuc')
     def _compute_trang_thai_ap_dung(self):
-        today = date.today()
+        today = fields.Date.context_today(self)
         for record in self:
             if record.ngay_ket_thuc and today > record.ngay_ket_thuc:
                 record.trang_thai_ap_dung = "Ngừng áp dụng"
-            elif record.ngay_bat_dau and today > record.ngay_bat_dau:
+            elif record.ngay_bat_dau and today >= record.ngay_bat_dau:
                 record.trang_thai_ap_dung = "Đang áp dụng"
             else:
                 record.trang_thai_ap_dung = "Chưa áp dụng"

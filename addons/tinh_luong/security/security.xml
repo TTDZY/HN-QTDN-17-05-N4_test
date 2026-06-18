@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="rule_bang_luong_self" model="ir.rule">
+        <field name="name">Nhân viên xem bảng lương của mình</field>
+        <field name="model_id" ref="model_bang_luong"/>
+        <field name="domain_force">[('nhan_vien_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="rule_bang_luong_hr_all" model="ir.rule">
+        <field name="name">HR xem toàn bộ bảng lương</field>
+        <field name="model_id" ref="model_bang_luong"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('nhan_su.group_nhan_su_user'))]"/>
+    </record>
+
+    <record id="rule_phieu_luong_self" model="ir.rule">
+        <field name="name">Nhân viên xem phiếu lương của mình</field>
+        <field name="model_id" ref="model_phieu_luong"/>
+        <field name="domain_force">[('nhan_vien_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="rule_phieu_luong_hr_all" model="ir.rule">
+        <field name="name">HR xem toàn bộ phiếu lương</field>
+        <field name="model_id" ref="model_phieu_luong"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('nhan_su.group_nhan_su_user'))]"/>
+    </record>
+
+    <record id="rule_tien_thuong_self" model="ir.rule">
+        <field name="name">Nhân viên xem khen thưởng của mình</field>
+        <field name="model_id" ref="model_tien_thuong"/>
+        <field name="domain_force">['|', ('kieu_thuong', '=', 'tat_ca'), ('nhan_vien_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="rule_tien_thuong_hr_all" model="ir.rule">
+        <field name="name">HR xem toàn bộ khen thưởng</field>
+        <field name="model_id" ref="model_tien_thuong"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('nhan_su.group_nhan_su_user'))]"/>
+    </record>
+
+    <record id="rule_ky_luat_self" model="ir.rule">
+        <field name="name">Nhân viên xem kỷ luật của mình</field>
+        <field name="model_id" ref="model_ky_luat"/>
+        <field name="domain_force">[('nhan_vien_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="rule_ky_luat_hr_all" model="ir.rule">
+        <field name="name">HR xem toàn bộ kỷ luật</field>
+        <field name="model_id" ref="model_ky_luat"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('nhan_su.group_nhan_su_user'))]"/>
+    </record>
+</odoo>

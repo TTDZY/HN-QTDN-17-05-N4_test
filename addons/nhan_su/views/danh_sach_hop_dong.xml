@@ -122,20 +122,20 @@
                             </div>
                             <div class="row">
                                 <div class="col-12">
-                                    <i class="fa fa-user"/> <field name="nhan_vien_id"/>
+                                    <i class="fa fa-user" title="Nhân viên"/> <field name="nhan_vien_id"/>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-12">
-                                    <i class="fa fa-file-text-o"/> <field name="hop_dong_id"/>
+                                    <i class="fa fa-file-text-o" title="Hợp đồng"/> <field name="hop_dong_id"/>
                                 </div>
                             </div>
                             <div class="row mt-2">
                                 <div class="col-6">
-                                    <i class="fa fa-calendar"/> <field name="ngay_bat_dau"/>
+                                    <i class="fa fa-calendar" title="Thời gian"/> <field name="ngay_bat_dau"/>
                                 </div>
                                 <div class="col-6 text-end">
-                                    <i class="fa fa-money"/> <field name="tong_luong" widget="monetary"/>
+                                    <i class="fa fa-money" title="Tiền lương"/> <field name="tong_luong" widget="monetary"/>
                                 </div>
                             </div>
                         </div>

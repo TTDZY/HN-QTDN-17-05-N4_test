@@ -8,7 +8,7 @@ class DashboardChamCong(models.Model):
 
     nhan_vien_id = fields.Many2one('nhan_vien', string='Nhân viên')
     thang = fields.Char(string='Tháng')
-    thang_sort = fields.Date(string='Tháng')
+    thang_sort = fields.Date(string='Ngày đầu tháng')
     so_ngay_di_lam = fields.Integer(string='Số ngày đi làm')
 
     def init(self):
@@ -39,4 +39,3 @@ class DashboardChamCong(models.Model):
                     date_trunc('month', cc.ngay_cham_cong)
             )
         """)
-

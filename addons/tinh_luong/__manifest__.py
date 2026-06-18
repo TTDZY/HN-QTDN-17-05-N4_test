@@ -24,6 +24,7 @@
 
     # always loaded
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
         'views/nhan_vien_inherit.xml',
         'views/bang_luong.xml',
@@ -32,12 +33,12 @@
         'views/bang_thue_bac.xml',
         "views/phieu_luong.xml",
         "views/tien_thuong.xml",
+        "views/ky_luat.xml",
         "views/cron.xml",
         "views/email_template_phieu_luong.xml",
         'views/menu.xml',
     ],
     # only loaded in demonstration mode
-    'demo': [
-        'demo/demo.xml',
-    ],
+    'demo': [],
+    'license': 'LGPL-3',
 }

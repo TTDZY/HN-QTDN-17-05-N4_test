@@ -12,7 +12,9 @@
                             <field name="nhan_vien_id"/>
                             <field name="ngay_lam_don"/>
                             <field name="ngay_ap_dung"/>
-                            <field name="trang_thai_duyet"/>
+                            <field name="trang_thai_duyet" groups="nhan_su.group_nhan_su_user"/>
+                            <field name="trang_thai_duyet" readonly="1"
+                                   groups="base.group_user,!nhan_su.group_nhan_su_user"/>
                             <field name="loai_don"/>
                             
                             <field name="thoi_gian_xin" 

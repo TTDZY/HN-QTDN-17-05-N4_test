@@ -9,7 +9,7 @@ class DashboardLuong(models.Model):
     _order = 'thang_sort'
 
     thang_hien_thi = fields.Char("Tháng")
-    thang_sort = fields.Date("Tháng")
+    thang_sort = fields.Date("Ngày đầu tháng")
     tong_chi_tra = fields.Float("Tổng chi trả")
 
     def init(self):

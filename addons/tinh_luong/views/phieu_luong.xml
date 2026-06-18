@@ -69,6 +69,7 @@
                                     <field name="tien_tang_ca" readonly="1"/>
                                     <field name="tien_thuong" readonly="1"/>
                                     <field name="tien_phat" readonly="1"/>
+                                    <field name="tien_ky_luat" readonly="1"/>
                                     <field name="tien_thue_tncn" readonly="1"/>
                                     <field name="tong_thuc_linh" readonly="1"/>
                                     <field name="da_gui_email" readonly="1"/>

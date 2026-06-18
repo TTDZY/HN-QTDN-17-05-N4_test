@@ -2,6 +2,7 @@
 
 from . import bang_luong
 from . import tien_thuong
+from . import ky_luat
 from . import phieu_luong
 from . import bang_thue
 from . import bang_thue_bac

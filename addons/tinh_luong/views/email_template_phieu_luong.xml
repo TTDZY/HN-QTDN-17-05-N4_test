@@ -164,6 +164,17 @@
                                 </tr>
                                 </t>
 
+                                <t t-if="object.tien_ky_luat">
+                                <tr>
+                                    <td style="padding: 12px 0; border-bottom: 1px solid #eeeeee;">
+                                        <span style="color: #333333; font-size: 14px;">Khấu trừ kỷ luật</span>
+                                    </td>
+                                    <td align="right" style="padding: 12px 0; border-bottom: 1px solid #eeeeee;">
+                                        <strong style="color: #dc3545; font-size: 14px;">-<t t-esc="'{:,.0f}'.format(object.tien_ky_luat)"/> ₫</strong>
+                                    </td>
+                                </tr>
+                                </t>
+
                                 <t t-if="object.tien_thue_tncn">
                                 <tr>
                                     <td style="padding: 12px 0; border-bottom: 1px solid #eeeeee;">

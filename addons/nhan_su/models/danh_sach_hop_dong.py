@@ -102,12 +102,14 @@ class DanhSachHopDong(models.Model):
                 if record.ngay_ket_thuc < record.ngay_bat_dau:
                     raise ValidationError("Ngày kết thúc phải sau hoặc bằng ngày bắt đầu!")
     
-    @api.constrains('luong_co_ban')
+    @api.constrains('luong_co_ban', 'phu_cap')
     def _check_luong(self):
         """Kiểm tra lương phải > 0"""
         for record in self:
             if record.luong_co_ban and record.luong_co_ban <= 0:
                 raise ValidationError("Lương cơ bản phải lớn hơn 0!")
+            if record.phu_cap < 0:
+                raise ValidationError("Phụ cấp không được âm!")
     
     @api.constrains('nhan_vien_id', 'trang_thai')
     def _check_hop_dong_trung(self):

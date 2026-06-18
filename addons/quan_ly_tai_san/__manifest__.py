@@ -20,16 +20,12 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'mail'],
+    'depends': ['nhan_su'],
 
     # always loaded
     'data': [
-        'security/ir.model.access.csv',
-        'views/nhan_vien.xml',
         'views/menu.xml',
     ],
-    # only loaded in demonstration mode
-    'demo': [
-        'demo/demo.xml',
-    ],
+    'demo': [],
+    'license': 'LGPL-3',
 }

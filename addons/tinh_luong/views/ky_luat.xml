@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_ky_luat_tree" model="ir.ui.view">
+            <field name="name">ky.luat.tree</field>
+            <field name="model">ky_luat</field>
+            <field name="arch" type="xml">
+                <tree decoration-danger="trang_thai == 'da_ap_dung'"
+                      decoration-muted="trang_thai == 'huy'">
+                    <field name="name"/>
+                    <field name="nhan_vien_id"/>
+                    <field name="ngay_vi_pham"/>
+                    <field name="hinh_thuc"/>
+                    <field name="thang"/>
+                    <field name="nam"/>
+                    <field name="anh_huong_luong"/>
+                    <field name="so_tien"/>
+                    <field name="trang_thai"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_ky_luat_form" model="ir.ui.view">
+            <field name="name">ky.luat.form</field>
+            <field name="model">ky_luat</field>
+            <field name="arch" type="xml">
+                <form string="Quyết định kỷ luật">
+                    <header>
+                        <button name="action_gui_duyet" type="object" string="Gửi duyệt"
+                                class="btn-primary"
+                                attrs="{'invisible': [('trang_thai', '!=', 'nhap')]}"/>
+                        <button name="action_duyet" type="object" string="Duyệt"
+                                class="btn-primary"
+                                attrs="{'invisible': [('trang_thai', '!=', 'cho_duyet')]}"/>
+                        <button name="action_ap_dung" type="object" string="Áp dụng"
+                                class="btn-success"
+                                attrs="{'invisible': [('trang_thai', '!=', 'da_duyet')]}"/>
+                        <button name="action_huy" type="object" string="Hủy"
+                                attrs="{'invisible': [('trang_thai', 'in', ['da_ap_dung', 'huy'])]}"/>
+                        <field name="trang_thai" widget="statusbar"
+                               statusbar_visible="nhap,cho_duyet,da_duyet,da_ap_dung"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" readonly="1"/>
+                                <field name="nhan_vien_id"
+                                       attrs="{'readonly': [('trang_thai', '!=', 'nhap')]}"/>
+                                <field name="ngay_vi_pham"
+                                       attrs="{'readonly': [('trang_thai', '!=', 'nhap')]}"/>
+                                <field name="hinh_thuc"
+                                       attrs="{'readonly': [('trang_thai', '!=', 'nhap')]}"/>
+                            </group>
+                            <group>
+                                <field name="thang"
+                                       attrs="{'readonly': [('trang_thai', '!=', 'nhap')]}"/>
+                                <field name="nam"
+                                       attrs="{'readonly': [('trang_thai', '!=', 'nhap')]}"/>
+                                <field name="anh_huong_luong"
+                                       attrs="{'readonly': [('trang_thai', '!=', 'nhap')]}"/>
+                                <field name="so_tien"
+                                       attrs="{'invisible': [('anh_huong_luong', '=', False)],
+                                               'required': [('anh_huong_luong', '=', True)],
+                                               'readonly': [('trang_thai', '!=', 'nhap')]}"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="ly_do"
+                                   attrs="{'readonly': [('trang_thai', '!=', 'nhap')]}"/>
+                            <field name="giai_trinh"/>
+                            <field name="file_bang_chung" filename="ten_file_bang_chung"/>
+                            <field name="ten_file_bang_chung" invisible="1"/>
+                            <field name="ghi_chu"/>
+                        </group>
+                        <group string="Phê duyệt">
+                            <field name="nguoi_de_xuat_id"/>
+                            <field name="nguoi_duyet_id"/>
+                            <field name="ngay_duyet"/>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ky_luat" model="ir.actions.act_window">
+            <field name="name">Kỷ luật</field>
+            <field name="res_model">ky_luat</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    </data>
+</odoo>

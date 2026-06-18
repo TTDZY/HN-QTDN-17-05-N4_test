@@ -86,6 +86,25 @@ class TienThuong(models.Model):
         for rec in self:
             if rec.kieu_thuong == 'mot_nguoi' and not rec.nhan_vien_id:
                 raise ValidationError("Phải chọn nhân viên khi thưởng cho 1 người!")
+            if rec.thang < 1 or rec.thang > 12:
+                raise ValidationError('Tháng áp dụng phải nằm trong khoảng 1 đến 12.')
+            if rec.nam < 2000:
+                raise ValidationError('Năm áp dụng không hợp lệ.')
+            if rec.so_tien <= 0:
+                raise ValidationError('Số tiền thưởng phải lớn hơn 0.')
+
+    def _refresh_payroll(self):
+        payrolls = self.env['bang_luong'].search([
+            ('thang', 'in', self.mapped('thang')),
+            ('nam', 'in', self.mapped('nam')),
+        ])
+        individual_employees = self.filtered(
+            lambda rec: rec.kieu_thuong == 'mot_nguoi'
+        ).mapped('nhan_vien_id')
+        if individual_employees and not self.filtered(lambda rec: rec.kieu_thuong == 'tat_ca'):
+            payrolls = payrolls.filtered(lambda payroll: payroll.nhan_vien_id in individual_employees)
+        payrolls._compute_tien_thuong()
+        payrolls._compute_luong_final()
 
     # ======================
     # COMPUTE
@@ -108,9 +127,11 @@ class TienThuong(models.Model):
             rec.trang_thai = 'da_duyet'
             rec.ngay_duyet = fields.Date.today()
             rec.nguoi_duyet_id = self.env.user.id
+        self._refresh_payroll()
 
     def action_da_chi(self):
         for rec in self:
             if rec.trang_thai != 'da_duyet':
                 raise ValidationError("Tiền thưởng phải được duyệt trước khi chi!")
             rec.trang_thai = 'da_chi'
+        self._refresh_payroll()

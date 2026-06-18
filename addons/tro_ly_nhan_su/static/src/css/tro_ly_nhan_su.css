@@ -1,0 +1,273 @@
+.o_tro_ly_ai_form .o_form_sheet_bg {
+    background:
+        radial-gradient(circle at top left, rgba(123, 97, 255, 0.18), transparent 34rem),
+        radial-gradient(circle at bottom right, rgba(0, 188, 212, 0.14), transparent 30rem),
+        #f5f7fb;
+}
+
+.o_tro_ly_ai_sheet {
+    max-width: 1120px !important;
+    border: 0 !important;
+    border-radius: 24px !important;
+    padding: 0 !important;
+    overflow: hidden;
+    box-shadow: 0 22px 60px rgba(26, 39, 68, 0.13) !important;
+}
+
+.o_tro_ly_ai_hero {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 28px 32px;
+    color: #fff;
+    background:
+        linear-gradient(135deg, rgba(42, 52, 125, 0.96), rgba(94, 80, 212, 0.94)),
+        linear-gradient(45deg, #243b55, #141e30);
+}
+
+.o_tro_ly_ai_hero_icon,
+.o_tro_ly_ai_avatar,
+.o_tro_ly_ai_profile_avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    border-radius: 16px;
+}
+
+.o_tro_ly_ai_hero_icon {
+    width: 58px;
+    height: 58px;
+    font-size: 25px;
+    background: rgba(255, 255, 255, 0.16);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.o_tro_ly_ai_hero_text {
+    flex: 1 1 auto;
+}
+
+.o_tro_ly_ai_hero_text h1 {
+    margin: 0 0 6px 0;
+    color: #fff;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.o_tro_ly_ai_hero_text p {
+    max-width: 720px;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+}
+
+.o_tro_ly_ai_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 13px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.o_tro_ly_ai_workspace {
+    display: grid;
+    grid-template-columns: minmax(230px, 300px) minmax(0, 1fr);
+    gap: 24px;
+    padding: 26px;
+    background: linear-gradient(180deg, #ffffff, #f7f8fc);
+}
+
+.o_tro_ly_ai_sidebar,
+.o_tro_ly_ai_chat {
+    min-width: 0;
+}
+
+.o_tro_ly_ai_profile_card,
+.o_tro_ly_ai_suggestions,
+.o_tro_ly_ai_prompt_card,
+.o_tro_ly_ai_bubble {
+    border: 1px solid #e7eaf3;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 10px 30px rgba(31, 41, 55, 0.07);
+}
+
+.o_tro_ly_ai_profile_card {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 16px;
+}
+
+.o_tro_ly_ai_profile_avatar {
+    color: #4f46e5;
+    background: #eef2ff;
+}
+
+.o_tro_ly_ai_label {
+    display: block;
+    margin-bottom: 2px;
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.o_tro_ly_ai_employee {
+    font-weight: 700;
+}
+
+.o_tro_ly_ai_employee .o_input {
+    border: 0;
+    padding: 0;
+    color: #111827;
+    background: transparent;
+    box-shadow: none;
+}
+
+.o_tro_ly_ai_suggestions {
+    margin-top: 16px;
+    padding: 16px;
+}
+
+.o_tro_ly_ai_section_title {
+    display: block;
+    margin-bottom: 10px;
+    color: #1f2937;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.o_tro_ly_ai_chip {
+    margin-top: 9px;
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #f9fafb;
+    color: #374151;
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+.o_tro_ly_ai_chip:hover {
+    border-color: #c7d2fe;
+    background: #eef2ff;
+    color: #3730a3;
+}
+
+.o_tro_ly_ai_chat {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.o_tro_ly_ai_message {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.o_tro_ly_ai_message_user {
+    justify-content: flex-end;
+}
+
+.o_tro_ly_ai_avatar {
+    color: #fff;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    box-shadow: 0 10px 24px rgba(99, 102, 241, 0.25);
+}
+
+.o_tro_ly_ai_avatar_user {
+    color: #065f46;
+    background: #d1fae5;
+    box-shadow: none;
+}
+
+.o_tro_ly_ai_bubble {
+    max-width: 760px;
+    padding: 16px 18px;
+    color: #243042;
+    line-height: 1.55;
+}
+
+.o_tro_ly_ai_bubble_title {
+    margin-bottom: 5px;
+    color: #111827;
+    font-weight: 800;
+}
+
+.o_tro_ly_ai_bubble_user {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+}
+
+.o_tro_ly_ai_prompt_card {
+    padding: 18px;
+}
+
+.o_tro_ly_ai_question textarea,
+.o_tro_ly_ai_prompt_card textarea {
+    min-height: 118px !important;
+    padding: 14px 16px !important;
+    border: 1px solid #d7dce8 !important;
+    border-radius: 18px !important;
+    background: #fbfcff !important;
+    color: #111827 !important;
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+    resize: vertical;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.o_tro_ly_ai_question textarea:focus,
+.o_tro_ly_ai_prompt_card textarea:focus {
+    border-color: #818cf8 !important;
+    box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.18) !important;
+}
+
+.o_tro_ly_ai_answer {
+    border-color: #ddd6fe;
+    background:
+        linear-gradient(180deg, rgba(250, 245, 255, 0.96), rgba(255, 255, 255, 0.96));
+}
+
+.o_tro_ly_ai_answer textarea,
+.o_tro_ly_ai_bubble textarea {
+    min-height: 150px !important;
+    border: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    color: #1f2937 !important;
+    line-height: 1.58 !important;
+    resize: vertical;
+    box-shadow: none !important;
+}
+
+.o_tro_ly_ai_send {
+    border-color: #4f46e5 !important;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+}
+
+@media (max-width: 900px) {
+    .o_tro_ly_ai_hero,
+    .o_tro_ly_ai_workspace {
+        padding: 20px;
+    }
+
+    .o_tro_ly_ai_workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .o_tro_ly_ai_badge {
+        display: none;
+    }
+}

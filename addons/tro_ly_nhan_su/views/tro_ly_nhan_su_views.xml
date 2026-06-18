@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_tro_ly_nhan_su_form" model="ir.ui.view">
+            <field name="name">tro.ly.nhan.su.form</field>
+            <field name="model">tro_ly_nhan_su</field>
+            <field name="arch" type="xml">
+                <form string="Trợ lý AI nhân sự" class="o_tro_ly_ai_form">
+                    <sheet class="o_tro_ly_ai_sheet" style="max-width: 1180px; padding: 0; border-radius: 18px; overflow: hidden; box-shadow: 0 18px 46px rgba(15, 23, 42, 0.13);">
+                        <div class="o_tro_ly_ai_hero" style="display: flex; align-items: center; gap: 18px; padding: 28px 32px; color: #fff; background: linear-gradient(135deg, #1e3a8a 0%, #4f46e5 48%, #7c3aed 100%);">
+                            <div class="o_tro_ly_ai_hero_icon" style="display: flex; align-items: center; justify-content: center; width: 58px; height: 58px; border-radius: 18px; background: rgba(255,255,255,0.16); font-size: 25px; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22);">
+                                <span class="fa fa-comments" title="Trợ lý"/>
+                            </div>
+                            <div class="o_tro_ly_ai_hero_text" style="flex: 1;">
+                                <h1 style="margin: 0 0 6px 0; color: #fff; font-size: 32px; font-weight: 800;">Trợ lý AI nhân sự</h1>
+                                <p style="margin: 0; max-width: 760px; color: rgba(255,255,255,0.82); font-size: 15px;">Hỏi nhanh về chấm công, lương, hợp đồng, khen thưởng và kỷ luật bằng tiếng Việt tự nhiên.</p>
+                            </div>
+                            <div class="o_tro_ly_ai_badge" style="display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.13); color: rgba(255,255,255,0.92); white-space: nowrap;">
+                                <span class="fa fa-shield"/>
+                                Dữ liệu nội bộ
+                            </div>
+                        </div>
+
+                        <div class="o_tro_ly_ai_workspace" style="display: flex; gap: 24px; padding: 26px; background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);">
+                            <div class="o_tro_ly_ai_sidebar" style="flex: 0 0 300px;">
+                                <div class="o_tro_ly_ai_profile_card" style="display: flex; align-items: center; gap: 13px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 18px; background: #fff; box-shadow: 0 10px 26px rgba(15,23,42,0.07);">
+                                    <div class="o_tro_ly_ai_profile_avatar" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 15px; background: #eef2ff; color: #4f46e5;">
+                                        <span class="fa fa-user" title="Nhân viên"/>
+                                    </div>
+                                    <div>
+                                        <span class="o_tro_ly_ai_label" style="display: block; margin-bottom: 3px; color: #64748b; font-size: 12px;">Đang tra cứu cho</span>
+                                        <field name="nhan_vien_id"
+                                               class="o_tro_ly_ai_employee"
+                                               options="{'no_create': True}"/>
+                                    </div>
+                                </div>
+
+                                <div class="o_tro_ly_ai_suggestions" style="margin-top: 16px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 18px; background: #fff; box-shadow: 0 10px 26px rgba(15,23,42,0.07);">
+                                    <div class="o_tro_ly_ai_section_title" style="margin-bottom: 10px; color: #111827; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .03em;">
+                                        Gợi ý câu hỏi
+                                    </div>
+                                    <div class="o_tro_ly_ai_chip" style="margin-top: 9px; padding: 10px 12px; border: 1px solid #e0e7ff; border-radius: 14px; background: #f8fafc; color: #334155;">Lương tháng này của tôi bao nhiêu?</div>
+                                    <div class="o_tro_ly_ai_chip" style="margin-top: 9px; padding: 10px 12px; border: 1px solid #e0e7ff; border-radius: 14px; background: #f8fafc; color: #334155;">Vì sao lương tháng này thấp hơn tháng trước?</div>
+                                    <div class="o_tro_ly_ai_chip" style="margin-top: 9px; padding: 10px 12px; border: 1px solid #e0e7ff; border-radius: 14px; background: #f8fafc; color: #334155;">Tháng này tôi đi muộn mấy lần?</div>
+                                    <div class="o_tro_ly_ai_chip" style="margin-top: 9px; padding: 10px 12px; border: 1px solid #e0e7ff; border-radius: 14px; background: #f8fafc; color: #334155;">Hợp đồng của tôi còn hạn không?</div>
+                                    <div class="o_tro_ly_ai_chip" style="margin-top: 9px; padding: 10px 12px; border: 1px solid #e0e7ff; border-radius: 14px; background: #f8fafc; color: #334155;">Tôi có khoản thưởng nào không?</div>
+                                </div>
+                            </div>
+
+                            <div class="o_tro_ly_ai_chat" style="flex: 1; display: flex; flex-direction: column; gap: 16px; min-width: 0;">
+                                <div class="o_tro_ly_ai_message o_tro_ly_ai_message_bot" style="display: flex; align-items: flex-start; gap: 12px;">
+                                    <div class="o_tro_ly_ai_avatar" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 15px; color: #fff; background: linear-gradient(135deg, #6366f1, #8b5cf6); box-shadow: 0 10px 22px rgba(99,102,241,0.25);">
+                                        <span class="fa fa-magic" title="Trợ lý"/>
+                                    </div>
+                                    <div class="o_tro_ly_ai_bubble" style="max-width: 760px; padding: 16px 18px; border: 1px solid #e5e7eb; border-radius: 18px; background: #fff; box-shadow: 0 10px 26px rgba(15,23,42,0.07); color: #243042; line-height: 1.55;">
+                                        <div class="o_tro_ly_ai_bubble_title" style="margin-bottom: 5px; color: #111827; font-weight: 800;">Xin chào, mình là trợ lý nhân sự.</div>
+                                        <div>Mình có thể giải thích dữ liệu HR của bạn theo cách dễ hiểu hơn. Bạn cứ hỏi tự nhiên nhé.</div>
+                                    </div>
+                                </div>
+
+                                <div class="o_tro_ly_ai_prompt_card" style="padding: 18px; border: 1px solid #dbe4f0; border-radius: 20px; background: #fff; box-shadow: 0 12px 30px rgba(15,23,42,0.08);">
+                                    <label for="cau_hoi" class="o_tro_ly_ai_section_title" style="display: block; margin-bottom: 10px; color: #111827; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .03em;">Câu hỏi của bạn</label>
+                                    <field name="cau_hoi"
+                                           nolabel="1"
+                                           class="o_tro_ly_ai_question"
+                                           placeholder="Ví dụ: Vì sao lương tháng này của tôi thấp hơn tháng trước?"/>
+                                </div>
+
+                                <div class="o_tro_ly_ai_message o_tro_ly_ai_message_bot" style="display: flex; align-items: flex-start; gap: 12px;" attrs="{'invisible': [('cau_tra_loi', '=', False)]}">
+                                    <div class="o_tro_ly_ai_avatar" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 15px; color: #fff; background: linear-gradient(135deg, #6366f1, #8b5cf6); box-shadow: 0 10px 22px rgba(99,102,241,0.25);">
+                                        <span class="fa fa-magic" title="Trợ lý"/>
+                                    </div>
+                                    <div class="o_tro_ly_ai_bubble o_tro_ly_ai_answer" style="max-width: 760px; padding: 16px 18px; border: 1px solid #ddd6fe; border-radius: 18px; background: linear-gradient(180deg, #faf5ff, #ffffff); box-shadow: 0 10px 26px rgba(15,23,42,0.07); color: #243042; line-height: 1.55;">
+                                        <div class="o_tro_ly_ai_bubble_title" style="margin-bottom: 5px; color: #111827; font-weight: 800;">Câu trả lời</div>
+                                        <field name="cau_tra_loi" nolabel="1" readonly="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </sheet>
+                    <footer>
+                        <button name="action_hoi" string="Gửi câu hỏi"
+                                type="object" class="btn-primary o_tro_ly_ai_send"/>
+                        <button name="action_lam_moi" string="Câu hỏi mới"
+                                type="object" class="btn-secondary"/>
+                        <button string="Đóng" special="cancel" class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_tro_ly_nhan_su" model="ir.actions.act_window">
+            <field name="name">Trợ lý AI nhân sự</field>
+            <field name="res_model">tro_ly_nhan_su</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="view_tro_ly_nhan_su_config_form" model="ir.ui.view">
+            <field name="name">tro.ly.nhan.su.config.form</field>
+            <field name="model">res.config.settings</field>
+            <field name="arch" type="xml">
+                <form string="Cấu hình trợ lý AI nhân sự">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>Cấu hình trợ lý AI nhân sự</h1>
+                            <p>Trợ lý đang chạy ở chế độ AI cơ bản nội bộ: tra cứu dữ liệu Odoo bằng bộ nhận diện câu hỏi có sẵn, không gọi OpenAI.</p>
+                        </div>
+                        <group>
+                            <field name="tro_ly_nhan_su_openai_enabled"/>
+                            <field name="tro_ly_nhan_su_openai_api_key" password="True"/>
+                            <field name="tro_ly_nhan_su_openai_model"
+                                   placeholder="Ví dụ: gpt-4.1-mini"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Lưu" type="object" name="execute" class="btn-primary"/>
+                        <button string="Hủy" special="cancel" class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_tro_ly_nhan_su_config" model="ir.actions.act_window">
+            <field name="name">Cấu hình trợ lý AI</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_tro_ly_nhan_su_config_form"/>
+            <field name="target">inline</field>
+        </record>
+
+        <menuitem id="menu_tro_ly_nhan_su"
+                  name="Trợ lý AI"
+                  parent="nhan_su.menu_root"
+                  action="action_tro_ly_nhan_su"
+                  sequence="90"/>
+
+        <menuitem id="menu_tro_ly_nhan_su_config"
+                  name="Cấu hình trợ lý AI"
+                  parent="nhan_su.menu_root"
+                  action="action_tro_ly_nhan_su_config"
+                  groups="base.group_system"
+                  sequence="91"/>
+    </data>
+</odoo>

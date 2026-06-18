@@ -28,16 +28,29 @@ class ThueThuNhap(models.Model):
     trang_thai = fields.Selection([
         ('dang_ap_dung', 'Đang áp dụng'),
         ('het_hieu_luc', 'Hết hiệu lực')
-    ], compute='_compute_trang_thai', store=True)
+    ], compute='_compute_trang_thai')
 
     bac_ids = fields.One2many('thue_thu_nhap_bac', 'thue_id', string='Chi tiết bậc thuế')
     ghi_chu = fields.Text(string='Ghi chú pháp lý')
 
     @api.depends('ap_dung_tu', 'ap_dung_den')
     def _compute_trang_thai(self):
-        today = fields.Date.today()
+        today = fields.Date.context_today(self)
         for rec in self:
             if rec.ap_dung_tu and rec.ap_dung_tu <= today and (not rec.ap_dung_den or rec.ap_dung_den >= today):
                 rec.trang_thai = 'dang_ap_dung'
             else:
                 rec.trang_thai = 'het_hieu_luc'
+
+    @api.constrains(
+        'ap_dung_tu',
+        'ap_dung_den',
+        'giam_tru_ban_than',
+        'giam_tru_nguoi_phu_thuoc',
+    )
+    def _check_tax_config(self):
+        for rec in self:
+            if rec.ap_dung_den and rec.ap_dung_den < rec.ap_dung_tu:
+                raise ValidationError("Ngày hết hiệu lực phải sau ngày bắt đầu hiệu lực.")
+            if rec.giam_tru_ban_than < 0 or rec.giam_tru_nguoi_phu_thuoc < 0:
+                raise ValidationError("Mức giảm trừ không được âm.")

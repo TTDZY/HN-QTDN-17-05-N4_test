@@ -10,6 +10,43 @@ class NhanVienInherit(models.Model):
     cham_cong_ids = fields.One2many(
         'cham_cong', 'nhan_vien_id', string='Lịch sử chấm công'
     )
+    so_ngay_lam_thang_nay = fields.Integer(
+        "Số ngày làm tháng này",
+        compute='_compute_thong_ke_cham_cong',
+    )
+    so_lan_tre_thang_nay = fields.Integer(
+        "Số lần trễ tháng này",
+        compute='_compute_thong_ke_cham_cong',
+    )
+
+    def _compute_thong_ke_cham_cong(self):
+        today = fields.Date.context_today(self)
+        start_of_month = today.replace(day=1)
+        grouped = self.env['cham_cong'].read_group(
+            [
+                ('nhan_vien_id', 'in', self.ids),
+                ('ngay_cham_cong', '>=', start_of_month),
+                ('ngay_cham_cong', '<=', today),
+            ],
+            ['nhan_vien_id', 'trang_thai'],
+            ['nhan_vien_id', 'trang_thai'],
+            lazy=False,
+        )
+        counters = {}
+        working_states = {'di_lam', 'di_muon', 've_som', 'di_muon_ve_som'}
+        late_states = {'di_muon', 'di_muon_ve_som'}
+        for group in grouped:
+            employee_id = group['nhan_vien_id'][0]
+            state = group['trang_thai']
+            values = counters.setdefault(employee_id, {'work': 0, 'late': 0})
+            if state in working_states:
+                values['work'] += group['__count']
+            if state in late_states:
+                values['late'] += group['__count']
+        for employee in self:
+            values = counters.get(employee.id, {})
+            employee.so_ngay_lam_thang_nay = values.get('work', 0)
+            employee.so_lan_tre_thang_nay = values.get('late', 0)
 
 
 class BangChamCong(models.Model):
@@ -105,6 +142,53 @@ class BangChamCong(models.Model):
         ('di_muon_ve_som', 'Đi muộn & về sớm'),
         ('vang_mat', 'Vắng mặt'),
     ], compute='_compute_trang_thai', store=True)
+
+    _sql_constraints = [
+        (
+            'unique_employee_attendance_date',
+            'unique(nhan_vien_id, ngay_cham_cong)',
+            'Mỗi nhân viên chỉ được có một bản chấm công trong một ngày!',
+        ),
+    ]
+
+    def _refresh_related_payrolls(self, employee_ids=None, dates=None):
+        employee_ids = employee_ids or self.mapped('nhan_vien_id').ids
+        dates = dates or self.mapped('ngay_cham_cong')
+        periods = {(work_date.month, work_date.year) for work_date in dates if work_date}
+        payroll_model = self.env['bang_luong'].sudo()
+        if not employee_ids or not periods or 'bang_luong' not in self.env.registry.models:
+            return
+        for month, year in periods:
+            payrolls = payroll_model.search([
+                ('nhan_vien_id', 'in', employee_ids),
+                ('thang', '=', month),
+                ('nam', '=', year),
+            ])
+            payrolls._compute_data_cham_cong()
+            payrolls._compute_luong_final()
+
+    @api.model
+    def create(self, vals):
+        record = super().create(vals)
+        record._refresh_related_payrolls()
+        return record
+
+    def write(self, vals):
+        old_employee_ids = self.mapped('nhan_vien_id').ids
+        old_dates = self.mapped('ngay_cham_cong')
+        result = super().write(vals)
+        self._refresh_related_payrolls(
+            employee_ids=list(set(old_employee_ids + self.mapped('nhan_vien_id').ids)),
+            dates=list(set(old_dates + self.mapped('ngay_cham_cong'))),
+        )
+        return result
+
+    def unlink(self):
+        employee_ids = self.mapped('nhan_vien_id').ids
+        dates = self.mapped('ngay_cham_cong')
+        result = super().unlink()
+        self._refresh_related_payrolls(employee_ids=employee_ids, dates=dates)
+        return result
 
     # ==========================================================
     # COMPUTE METHODS

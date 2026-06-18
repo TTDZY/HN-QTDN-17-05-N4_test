@@ -1,16 +1,31 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api
-from datetime import datetime
-from odoo.exceptions import ValidationError
+from odoo import api, fields, models
 
 class NhanVien(models.Model):
     _name = 'nhan_vien'
     _description = 'Thông tin nhân viên'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'ho_va_ten'
-    _order = 'ten asc, tuoi desc'
+    _order = 'ten asc, ngay_sinh desc'
 
     # --- ĐỊNH DANH ---
-    ma_dinh_danh = fields.Char("Mã định danh", required=True, copy=False)
+    ma_dinh_danh = fields.Char(
+        "Mã định danh",
+        required=True,
+        copy=False,
+        readonly=True,
+        default='Mới',
+        tracking=True,
+    )
+    user_id = fields.Many2one(
+        'res.users',
+        string='Tài khoản Odoo',
+        ondelete='set null',
+        copy=False,
+        tracking=True,
+        help='Liên kết dùng để nhân viên xem dữ liệu cá nhân và sử dụng trợ lý HR.',
+    )
+    active = fields.Boolean(default=True)
     ho_ten_dem = fields.Char("Họ tên đệm", required=True)
     ten = fields.Char("Tên", required=True)
     ho_va_ten = fields.Char("Họ và tên", compute="_compute_ho_va_ten", store=True)
@@ -18,7 +33,7 @@ class NhanVien(models.Model):
 
     # --- CÁ NHÂN ---
     ngay_sinh = fields.Date("Ngày sinh")
-    tuoi = fields.Integer("Tuổi", compute="_compute_tuoi", store=True)
+    tuoi = fields.Integer("Tuổi", compute="_compute_tuoi")
     que_quan = fields.Char("Quê quán")
     email = fields.Char("Email")
     so_dien_thoai = fields.Char("Số điện thoại")
@@ -50,17 +65,18 @@ class NhanVien(models.Model):
     danh_sach_hop_dong_ids = fields.One2many('danh_sach_hop_dong', 'nhan_vien_id', string='Danh sách hợp đồng')
 
     # --- COMPUTE FIELDS ---
-    so_nguoi_bang_tuoi = fields.Integer("Số người bằng tuổi", compute="_compute_so_nguoi_bang_tuoi", store=True)
+    so_nguoi_bang_tuoi = fields.Integer(
+        "Số người bằng tuổi",
+        compute="_compute_so_nguoi_bang_tuoi",
+    )
     
     hop_dong_hien_tai_id = fields.Many2one('danh_sach_hop_dong', string='Hợp đồng hiện tại', compute='_compute_hop_dong_hien_tai', store=True)
     trang_thai_hop_dong = fields.Selection(related='hop_dong_hien_tai_id.trang_thai', string='Trạng thái HĐ', readonly=True)
 
-    so_ngay_lam_thang_nay = fields.Integer("Số ngày làm tháng này", compute='_compute_thong_ke_cham_cong')
-    so_lan_tre_thang_nay = fields.Integer("Số lần trễ tháng này", compute='_compute_thong_ke_cham_cong')
-    
     # --- CONSTRAINTS ---
     _sql_constraints = [
-        ('ma_dinh_danh_unique', 'unique(ma_dinh_danh)', 'Mã định danh nhân viên phải là duy nhất!')
+        ('ma_dinh_danh_unique', 'unique(ma_dinh_danh)', 'Mã định danh nhân viên phải là duy nhất!'),
+        ('user_id_unique', 'unique(user_id)', 'Một tài khoản Odoo chỉ được liên kết với một nhân viên!'),
     ]
     nguoi_phu_thuoc_ids = fields.One2many(
     'nguoi_phu_thuoc',
@@ -70,8 +86,7 @@ class NhanVien(models.Model):
 
     so_nguoi_phu_thuoc = fields.Integer(
         string='Số người phụ thuộc',
-        compute='_compute_so_nguoi_phu_thuoc',
-        store=True
+        compute='_compute_so_nguoi_phu_thuoc'
     )
 
     # @api.constrains('tuoi')
@@ -96,37 +111,33 @@ class NhanVien(models.Model):
             else:
                 record.ho_va_ten = record.ten or record.ho_ten_dem
 
-    @api.onchange("ten", "ho_ten_dem")
-    def _default_ma_dinh_danh(self):
+    @api.depends("ngay_sinh")
+    def _compute_tuoi(self):
+        today = fields.Date.context_today(self)
         for record in self:
-            if record.ho_ten_dem and record.ten:
-                # Lấy chữ cái đầu của họ tên đệm (VD: Nguyen Van -> nv)
-                chu_cai_dau = ''.join([word[0] for word in record.ho_ten_dem.lower().split() if word])
-                # Kết hợp: ten + ho_dem (VD: anh + nv -> anhnv)
-                import random
-                suffix = random.randint(10, 99) # Thêm số ngẫu nhiên để tránh trùng
-                record.ma_dinh_danh = f"{record.ten.lower()}{chu_cai_dau}{suffix}"
+            if not record.ngay_sinh:
+                record.tuoi = 0
+                continue
+            record.tuoi = (
+                today.year
+                - record.ngay_sinh.year
+                - ((today.month, today.day) < (record.ngay_sinh.month, record.ngay_sinh.day))
+            )
 
     @api.depends("ngay_sinh")
-    def _compute_tinh_tuoi(self): 
+    def _compute_so_nguoi_bang_tuoi(self):
+        employees = self.search([('ngay_sinh', '!=', False)])
+        age_counts = {}
+        for employee in employees:
+            today = fields.Date.context_today(employee)
+            age = (
+                today.year
+                - employee.ngay_sinh.year
+                - ((today.month, today.day) < (employee.ngay_sinh.month, employee.ngay_sinh.day))
+            )
+            age_counts[age] = age_counts.get(age, 0) + 1
         for record in self:
-            if record.ngay_sinh:  # Kiểm tra nếu trường ngay_sinh tồn tại
-                year_now = datetime.now().year  
-                record.tuoi = year_now - record.ngay_sinh.year 
-
-    # @api.depends("tuoi")
-    # def _compute_so_nguoi_bang_tuoi(self):
-    #     for record in self:
-    #         if not record.tuoi:
-    #            record.so_nguoi_bang_tuoi = 0
-    #            continue
-
-    #         domain = [('tuoi', '=', record.tuoi)]
-
-    #         if record.id and isinstance(record.id, int):
-    #             domain.append(('id', '!=', record.id))
-
-    #         record.so_nguoi_bang_tuoi = self.search_count(domain)
+            record.so_nguoi_bang_tuoi = max(age_counts.get(record.tuoi, 0) - 1, 0)
 
 
     @api.depends('danh_sach_hop_dong_ids.trang_thai', 'danh_sach_hop_dong_ids.luong_co_ban')
@@ -137,22 +148,8 @@ class NhanVien(models.Model):
             # Nếu có nhiều hợp đồng hiệu lực (do lỗi data), lấy cái mới nhất
             record.hop_dong_hien_tai_id = hop_dong.sorted('ngay_bat_dau', reverse=True)[0] if hop_dong else False
 
-    def _compute_thong_ke_cham_cong(self):
-        today = fields.Date.today()
-        start_of_month = today.replace(day=1)
-        
-        for record in self:
-            # Dùng search_count để tối ưu thay vì len(filtered)
-            domain_base = [
-                ('nhan_vien_id', '=', record.id),
-                ('ngay_cham_cong', '>=', start_of_month),
-                ('ngay_cham_cong', '<=', today)
-            ]
-            
-            record.so_ngay_lam_thang_nay = self.env['cham_cong'].search_count(
-                domain_base + [('trang_thai', 'in', ['di_lam', 'di_muon', 've_som', 'di_muon_ve_som'])]
-            )
-            
-            record.so_lan_tre_thang_nay = self.env['cham_cong'].search_count(
-                domain_base + [('trang_thai', 'in', ['di_muon', 'di_muon_ve_som'])]
-            )
+    @api.model
+    def create(self, vals):
+        if vals.get('ma_dinh_danh', 'Mới') == 'Mới':
+            vals['ma_dinh_danh'] = self.env['ir.sequence'].next_by_code('nhan_su.nhan_vien') or 'Mới'
+        return super().create(vals)

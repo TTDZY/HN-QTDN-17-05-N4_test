@@ -6,6 +6,10 @@
     <field name="arch" type="xml">
         <xpath expr="//notebook" position="inside">
             <page string="Danh sách chấm công">
+                <group>
+                    <field name="so_ngay_lam_thang_nay"/>
+                    <field name="so_lan_tre_thang_nay"/>
+                </group>
                 <field name="cham_cong_ids"/>
             </page>
         </xpath>

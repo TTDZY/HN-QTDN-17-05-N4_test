@@ -24,7 +24,9 @@
 
     # always loaded
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
+        'data/nhan_vien_sequence.xml',
         'views/chuc_vu.xml',
         'views/don_vi.xml',
         'views/nhan_vien.xml',
@@ -37,7 +39,6 @@
         'views/menu.xml',
     ],
     # only loaded in demonstration mode
-    'demo': [
-        'demo/demo.xml',
-    ],
+    'demo': [],
+    'license': 'LGPL-3',
 }

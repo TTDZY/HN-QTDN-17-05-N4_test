@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_nhan_su_noi_bo" model="ir.module.category">
+        <field name="name">Quản lý nhân sự nội bộ</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="group_nhan_su_user" model="res.groups">
+        <field name="name">Nhân viên HR</field>
+        <field name="category_id" ref="module_category_nhan_su_noi_bo"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="group_nhan_su_manager" model="res.groups">
+        <field name="name">Quản lý HR và tiền lương</field>
+        <field name="category_id" ref="module_category_nhan_su_noi_bo"/>
+        <field name="implied_ids" eval="[(4, ref('group_nhan_su_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+    </record>
+
+    <record id="rule_nhan_vien_self" model="ir.rule">
+        <field name="name">Nhân viên chỉ xem hồ sơ của mình</field>
+        <field name="model_id" ref="model_nhan_vien"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_nhan_vien_hr_all" model="ir.rule">
+        <field name="name">HR xem toàn bộ hồ sơ nhân viên</field>
+        <field name="model_id" ref="model_nhan_vien"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_nhan_su_user'))]"/>
+    </record>
+
+    <record id="rule_nguoi_phu_thuoc_self" model="ir.rule">
+        <field name="name">Nhân viên xem người phụ thuộc của mình</field>
+        <field name="model_id" ref="model_nguoi_phu_thuoc"/>
+        <field name="domain_force">[('nhan_vien_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_nguoi_phu_thuoc_hr_all" model="ir.rule">
+        <field name="name">HR xem toàn bộ người phụ thuộc</field>
+        <field name="model_id" ref="model_nguoi_phu_thuoc"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_nhan_su_user'))]"/>
+    </record>
+</odoo>

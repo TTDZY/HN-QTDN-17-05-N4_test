@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_tro_ly_nhan_su,tro_ly_nhan_su,model_tro_ly_nhan_su,base.group_user,1,1,1,1

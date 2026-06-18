@@ -9,10 +9,12 @@
                     <sheet>
                         <div class="oe_read_only" style="font-size:25px">Nhân viên</div>
                         <group col="4" string="Thông tin chung">
+                            <field name="active" invisible="1"/>
                             <field name="ho_ten_dem"/>
                             <field name="ten"/>
                             <field name="ho_va_ten"/>
                             <field name="ma_dinh_danh"/>
+                            <field name="user_id"/>
                             <field name="luong_co_ban"/>
                             <field name="bao_hiem_ca_nhan"/>
                             <field name="bao_hiem_xa_hoi"/>
@@ -22,6 +24,7 @@
                             <field name="so_nguoi_bang_tuoi"/>
                             <field name="que_quan"/>
                             <field name="email"/>
+                            <field name="so_dien_thoai"/>
                             <field name="anh" widget="image"/>
                         </group>
                         <notebook>
@@ -45,7 +48,7 @@
 
                         </notebook>
                     </sheet>
-                    
+                    <chatter/>
                 </form>
             </field>
         </record>
@@ -94,5 +97,3 @@
         </record>
     </data>
 </odoo>
-        
-    

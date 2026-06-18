@@ -53,6 +53,12 @@ class PhieuLuong(models.Model):
         store=True,
         readonly=True
     )
+    tien_ky_luat = fields.Float(
+        string='Khấu trừ kỷ luật',
+        related='bang_luong_id.tien_ky_luat',
+        store=True,
+        readonly=True,
+    )
 
 
     nhan_vien_id = fields.Many2one(
@@ -82,7 +88,7 @@ class PhieuLuong(models.Model):
     # CHI TIẾT TIỀN
     # ======================
     luong_theo_cong = fields.Float(
-        related='bang_luong_id.tong_luong',
+        related='bang_luong_id.luong_theo_cong',
         store=True,
         readonly=True
     )
@@ -152,13 +158,20 @@ class PhieuLuong(models.Model):
         for rec in self:
             rec.name = f"PL-{rec.thang:02d}/{rec.nam}-{rec.nhan_vien_id.ma_dinh_danh or ''}"
 
-    @api.constrains('nhan_vien_id', 'bang_luong_id')
+    @api.constrains('nhan_vien_id', 'bang_luong_id', 'thang', 'nam')
     def _check_nhan_vien_trung(self):
         for rec in self:
             if rec.bang_luong_id and rec.nhan_vien_id != rec.bang_luong_id.nhan_vien_id:
                 raise ValidationError(
                     "Nhân viên trên Phiếu lương phải trùng với Nhân viên của Bảng lương!"
                 )
+            if rec.bang_luong_id and (
+                rec.thang != rec.bang_luong_id.thang
+                or rec.nam != rec.bang_luong_id.nam
+            ):
+                raise ValidationError("Kỳ phiếu lương phải trùng với kỳ của bảng lương.")
+            if rec.thang < 1 or rec.thang > 12 or rec.nam < 2000:
+                raise ValidationError("Kỳ phiếu lương không hợp lệ.")
             
     @api.onchange('bang_luong_id')
     def _onchange_bang_luong(self):
@@ -194,12 +207,14 @@ class PhieuLuong(models.Model):
             if rec.trang_thai != 'xac_nhan':
                 raise ValidationError("Phiếu lương phải được xác nhận trước khi trả!")
 
-            if rec._email_da_gui():
+            if rec.da_gui_email or rec._email_da_gui():
                 raise ValidationError("Email phiếu lương đã được gửi thành công trước đó!")
 
+            rec._gui_email_phieu_luong()
+            if not rec.da_gui_email:
+                raise ValidationError("Chưa gửi được email phiếu lương, chưa thể đánh dấu đã trả.")
             rec.trang_thai = 'da_tra'
             rec.ngay_tra = fields.Date.today()
-            rec._gui_email_phieu_luong()
 
 
     def _gui_email_phieu_luong(self):
@@ -210,9 +225,7 @@ class PhieuLuong(models.Model):
             
         for rec in self:
             if not rec.nhan_vien_id.email:
-                # Thay vì raise lỗi làm gián đoạn cả quá trình, hãy ghi chú lại
-                rec.message_post(body="Không thể gửi email: Nhân viên không có địa chỉ email.")
-                continue
+                raise ValidationError("Nhân viên chưa có địa chỉ email.")
             
             # Gửi email: 
             # Dùng force_send=True để gửi ngay lập tức thay vì chờ Queue Job
@@ -222,9 +235,9 @@ class PhieuLuong(models.Model):
                 rec.message_post(body="Đã gửi email phiếu lương thành công.")
             except Exception as e:
                 rec.message_post(body=f"Gửi email thất bại: {str(e)}")
+                raise ValidationError(f"Gửi email phiếu lương thất bại: {str(e)}")
         return True
 
 
 
     
-

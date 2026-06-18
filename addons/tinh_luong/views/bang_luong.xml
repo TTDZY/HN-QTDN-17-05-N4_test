@@ -16,6 +16,7 @@
                 <field name="tong_phut_di_muon"/>
                 <field name="tong_phut_ve_som"/>
                 <field name="tong_gio_tang_ca" sum="Tổng OT"/> <field name="tien_tang_ca" sum="Tổng tiền OT"/> <field name="tien_phat" sum="Tổng phạt"/>
+                <field name="tien_ky_luat" sum="Tổng khấu trừ kỷ luật"/>
                 <field name="tong_luong"/>
             </tree>
         </field>
@@ -49,6 +50,7 @@
                     <group>
                         <field name="luong_co_ban"/>
                         <field name="luong_ngay"/>
+                        <field name="luong_theo_cong"/>
                     </group>
                     <group string="Thuế">
                         <field name="thue_id"/>
@@ -59,6 +61,7 @@
                         <field name="tien_tang_ca" style="color: green;"/> 
                         <field name="tien_thuong" style="color: green;"/>
                         <field name="tien_phat" style="color: red;"/>
+                        <field name="tien_ky_luat" style="color: red;"/>
                     </group>
                     <group string="Bảo hiểm">
                             <field name="tien_bh_ca_nhan" style="color:red"/>
@@ -82,4 +85,3 @@
     </record>
 </data>
 </odoo>
-

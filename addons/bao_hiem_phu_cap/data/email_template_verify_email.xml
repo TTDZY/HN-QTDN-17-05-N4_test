@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+    <record id="email_template_verify_email" model="mail.template">
+      <field name="name">Xác thực địa chỉ email</field>
+      <field name="email_from">${(user.company_id and user.company_id.email) or 'no-reply@example.com'}</field>
+      <field name="subject">Xác thực địa chỉ email</field>
+      <field name="model_id" ref="tinh_luong.model_phieu_luong"/>
+      <field name="auto_delete" eval="True"/>
+      <field name="body_html"><![CDATA[
+        <p>Xin chào ${object.nhan_vien_id.ho_va_ten or ''},</p>
+        <p>Đây là email kiểm tra để xác thực địa chỉ email của bạn. Nếu bạn nhận được email này, địa chỉ email hoạt động bình thường.</p>
+        <p>Trân trọng.</p>
+      ]]></field>
+    </record>
+  </data>
+</odoo>

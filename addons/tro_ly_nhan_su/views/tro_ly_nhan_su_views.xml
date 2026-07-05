@@ -96,50 +96,10 @@
             <field name="target">new</field>
         </record>
 
-        <record id="view_tro_ly_nhan_su_config_form" model="ir.ui.view">
-            <field name="name">tro.ly.nhan.su.config.form</field>
-            <field name="model">res.config.settings</field>
-            <field name="arch" type="xml">
-                <form string="Cấu hình trợ lý AI nhân sự">
-                    <sheet>
-                        <div class="oe_title">
-                            <h1>Cấu hình trợ lý AI nhân sự</h1>
-                            <p>Trợ lý đang chạy ở chế độ AI cơ bản nội bộ: tra cứu dữ liệu Odoo bằng bộ nhận diện câu hỏi có sẵn, không gọi OpenAI.</p>
-                        </div>
-                        <group>
-                            <field name="tro_ly_nhan_su_openai_enabled"/>
-                            <field name="tro_ly_nhan_su_openai_api_key" password="True"/>
-                            <field name="tro_ly_nhan_su_openai_model"
-                                   placeholder="Ví dụ: gpt-4.1-mini"/>
-                        </group>
-                    </sheet>
-                    <footer>
-                        <button string="Lưu" type="object" name="execute" class="btn-primary"/>
-                        <button string="Hủy" special="cancel" class="btn-secondary"/>
-                    </footer>
-                </form>
-            </field>
-        </record>
-
-        <record id="action_tro_ly_nhan_su_config" model="ir.actions.act_window">
-            <field name="name">Cấu hình trợ lý AI</field>
-            <field name="res_model">res.config.settings</field>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="view_tro_ly_nhan_su_config_form"/>
-            <field name="target">inline</field>
-        </record>
-
         <menuitem id="menu_tro_ly_nhan_su"
                   name="Trợ lý AI"
                   parent="nhan_su.menu_root"
                   action="action_tro_ly_nhan_su"
                   sequence="90"/>
-
-        <menuitem id="menu_tro_ly_nhan_su_config"
-                  name="Cấu hình trợ lý AI"
-                  parent="nhan_su.menu_root"
-                  action="action_tro_ly_nhan_su_config"
-                  groups="base.group_system"
-                  sequence="91"/>
     </data>
 </odoo>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+    <record id="bhpc_template_standard" model="bhpc.template">
+      <field name="name">Mặc định công ty</field>
+      <field name="default_phu_cap">0.0</field>
+      <field name="default_bao_hiem_ca_nhan">10.0</field>
+      <field name="default_bao_hiem_xa_hoi">10.0</field>
+    </record>
+  </data>
+</odoo>

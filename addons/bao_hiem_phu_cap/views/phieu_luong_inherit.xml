@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record id="view_phieu_luong_form_verify_email" model="ir.ui.view">
+      <field name="name">phieu.luong.form.verify.email</field>
+      <field name="model">phieu_luong</field>
+      <field name="inherit_id" ref="tinh_luong.view_phieu_luong_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//header" position="inside">
+          <button name="action_send_verify_email"
+                  string="Gửi thử email xác thực"
+                  type="object"
+                  class="btn-secondary"
+                  attrs="{'invisible': [('trang_thai', '!=', 'nhap')]}"/>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>

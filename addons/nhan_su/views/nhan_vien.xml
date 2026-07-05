@@ -15,10 +15,6 @@
                             <field name="ho_va_ten"/>
                             <field name="ma_dinh_danh"/>
                             <field name="user_id"/>
-                            <field name="luong_co_ban"/>
-                            <field name="bao_hiem_ca_nhan"/>
-                            <field name="bao_hiem_xa_hoi"/>
-                            <field name="phu_cap"/>
                             <field name="ngay_sinh"/>
                             <field name="tuoi"/>
                             <field name="so_nguoi_bang_tuoi"/>
@@ -26,6 +22,14 @@
                             <field name="email"/>
                             <field name="so_dien_thoai"/>
                             <field name="anh" widget="image"/>
+                        </group>
+                        <group col="4" string="Lương">
+                            <field name="luong_co_ban"/>
+                        </group>
+                        <group col="4" string="Bảo hiểm &amp; phụ cấp">
+                            <field name="bao_hiem_ca_nhan"/>
+                            <field name="bao_hiem_xa_hoi"/>
+                            <field name="phu_cap"/>
                         </group>
                         <notebook>
                             <page string="Danh sách lịch sử công tác">

@@ -99,7 +99,9 @@ var ReportAction = AbstractAction.extend({
      * this method we only send the message to a trusted domain.
      */
     _post_message: function (message) {
-        this.iframe.contentWindow.postMessage(message, this.trusted_origin);
+        if (this.iframe && this.iframe.contentWindow) {
+            this.iframe.contentWindow.postMessage(message, this.trusted_origin);
+        }
     },
 
     on_click_print: function () {

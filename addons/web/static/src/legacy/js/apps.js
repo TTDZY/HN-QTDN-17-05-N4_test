@@ -80,21 +80,27 @@ var Apps = AbstractAction.extend({
             'event': function(m) { self.trigger('message:' + m.event, m); },
             'action': function(m) {
                 self.do_action(m.action).then(function(r) {
-                    var w = self.$ifr[0].contentWindow;
-                    w.postMessage({id: m.id, result: r}, client.origin);
+                    var w = self.$ifr && self.$ifr[0] && self.$ifr[0].contentWindow;
+                    if (w) {
+                        w.postMessage({id: m.id, result: r}, client.origin);
+                    }
                 });
             },
             'rpc': function(m) {
                 return self._rpc({route: m.args[0], params: m.args[1]}).then(function(r) {
-                    var w = self.$ifr[0].contentWindow;
-                    w.postMessage({id: m.id, result: r}, client.origin);
+                    var w = self.$ifr && self.$ifr[0] && self.$ifr[0].contentWindow;
+                    if (w) {
+                        w.postMessage({id: m.id, result: r}, client.origin);
+                    }
                 });
             },
             'Model': function(m) {
                 return self._rpc({model: m.model, method: m.args[0], args: m.args[1]})
                     .then(function(r) {
-                        var w = self.$ifr[0].contentWindow;
-                        w.postMessage({id: m.id, result: r}, client.origin);
+                        var w = self.$ifr && self.$ifr[0] && self.$ifr[0].contentWindow;
+                        if (w) {
+                            w.postMessage({id: m.id, result: r}, client.origin);
+                        }
                     });
             },
         };
@@ -123,7 +129,10 @@ var Apps = AbstractAction.extend({
                 $(window).on("message." + self.uniq, self.proxy('_on_message'));
 
                 self.on('message:ready', self, function(m) {
-                    var w = this.$ifr[0].contentWindow;
+                    var w = this.$ifr && this.$ifr[0] && this.$ifr[0].contentWindow;
+                    if (!w) {
+                        return;
+                    }
                     var act = {
                         type: 'ir.actions.client',
                         tag: this.remote_action_tag,

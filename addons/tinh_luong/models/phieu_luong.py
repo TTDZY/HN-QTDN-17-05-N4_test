@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api
+import re
 from odoo.exceptions import ValidationError
 
 class PhieuLuong(models.Model):
@@ -218,14 +219,20 @@ class PhieuLuong(models.Model):
 
 
     def _gui_email_phieu_luong(self):
-        # Lấy template bằng XML ID
+        # Lấy template bằng XML ID (fallback sang template của module bao_hiem_phu_cap nếu template gốc không tồn tại)
         template = self.env.ref('tinh_luong.email_template_phieu_luong', raise_if_not_found=False)
+        if not template:
+            template = self.env.ref('bao_hiem_phu_cap.email_template_phieu_luong', raise_if_not_found=False)
         if not template:
             return False
             
+        email_re = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
         for rec in self:
-            if not rec.nhan_vien_id.email:
+            email = (rec.nhan_vien_id.email or '').strip()
+            if not email:
                 raise ValidationError("Nhân viên chưa có địa chỉ email.")
+            if not email_re.match(email):
+                raise ValidationError(f"Địa chỉ email không hợp lệ: {email}")
             
             # Gửi email: 
             # Dùng force_send=True để gửi ngay lập tức thay vì chờ Queue Job
@@ -237,6 +244,25 @@ class PhieuLuong(models.Model):
                 rec.message_post(body=f"Gửi email thất bại: {str(e)}")
                 raise ValidationError(f"Gửi email phiếu lương thất bại: {str(e)}")
         return True
+
+    def action_send_verify_email(self):
+        """Send a verification email using the verify template (for testing recipient)."""
+        template = self.env.ref('bao_hiem_phu_cap.email_template_verify_email', raise_if_not_found=False)
+        if not template:
+            raise ValidationError('Template xác thực email không được tìm thấy.')
+        email_re = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+        for rec in self:
+            email = (rec.nhan_vien_id.email or '').strip()
+            if not email:
+                raise ValidationError('Nhân viên chưa có địa chỉ email.')
+            if not email_re.match(email):
+                raise ValidationError(f'Địa chỉ email không hợp lệ: {email}')
+            try:
+                template.send_mail(rec.id, force_send=True, raise_exception=True)
+                rec.message_post(body='Đã gửi email xác thực thành công.')
+            except Exception as e:
+                rec.message_post(body=f'Gửi email xác thực thất bại: {str(e)}')
+                raise ValidationError(f'Gửi email xác thực thất bại: {str(e)}')
 
 
 

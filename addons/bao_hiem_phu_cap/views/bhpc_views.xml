@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record id="view_bhpc_template_tree" model="ir.ui.view">
+      <field name="name">bhpc.template.tree</field>
+      <field name="model">bhpc.template</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="default_phu_cap"/>
+          <field name="default_bao_hiem_ca_nhan"/>
+          <field name="default_bao_hiem_xa_hoi"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="view_bhpc_template_form" model="ir.ui.view">
+      <field name="name">bhpc.template.form</field>
+      <field name="model">bhpc.template</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <field name="name"/>
+              <field name="default_phu_cap"/>
+              <field name="default_bao_hiem_ca_nhan"/>
+              <field name="default_bao_hiem_xa_hoi"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_bhpc_template" model="ir.actions.act_window">
+      <field name="name">Mẫu BH &amp; PC</field>
+      <field name="res_model">bhpc.template</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_bhpc_root" name="BH &amp; PC" parent="nhan_su.menu_root" sequence="85"/>
+    <menuitem id="menu_bhpc_templates" name="Mẫu BH/PC" parent="menu_bhpc_root" action="action_bhpc_template"/>
+  </data>
+</odoo>

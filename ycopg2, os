@@ -1,0 +1,4 @@
+ id | name | smtp_host | smtp_port | smtp_authentication | smtp_user | smtp_pass | smtp_encryption | active 
+----+------+-----------+-----------+---------------------+-----------+-----------+-----------------+--------
+(0 rows)
+

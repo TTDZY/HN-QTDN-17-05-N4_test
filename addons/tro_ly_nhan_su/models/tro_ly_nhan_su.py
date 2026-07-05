@@ -15,27 +15,6 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 
-class ResConfigSettings(models.TransientModel):
-    _inherit = 'res.config.settings'
-
-    tro_ly_nhan_su_openai_enabled = fields.Boolean(
-        string='Dùng OpenAI cho trợ lý nhân sự',
-        default=True,
-        config_parameter='tro_ly_nhan_su.openai_enabled',
-    )
-    tro_ly_nhan_su_openai_api_key = fields.Char(
-        string='OpenAI API key',
-        config_parameter='tro_ly_nhan_su.openai_api_key',
-        groups='base.group_system',
-    )
-    tro_ly_nhan_su_openai_model = fields.Char(
-        string='OpenAI model',
-        default='gpt-4.1-mini',
-        config_parameter='tro_ly_nhan_su.openai_model',
-        help='Ví dụ: gpt-4.1-mini hoặc model mới hơn mà tài khoản OpenAI của bạn hỗ trợ.',
-    )
-
-
 class TroLyNhanSu(models.TransientModel):
     _name = 'tro_ly_nhan_su'
     _description = 'Trợ lý AI nhân sự'
@@ -494,6 +473,42 @@ Nếu phát hiện bất thường nghiệp vụ trong dữ liệu, nêu nhẹ l
             f"khấu trừ lương {self._format_money(total)}. Nội dung: {reasons}."
         )
 
+    def _answer_send_payslip(self, employee, month, year):
+        ph = self.env['phieu_luong'].search([
+            ('nhan_vien_id', '=', employee.id),
+            ('thang', '=', month),
+            ('nam', '=', year),
+        ], limit=1)
+        if not ph:
+            return f"Không tìm thấy phiếu lương {month}/{year} để gửi."
+        try:
+            ok = ph._gui_email_phieu_luong()
+            return 'Đã gửi email phiếu lương.' if ok else 'Gửi email không thành công.'
+        except Exception as e:
+            return f'Gửi email thất bại: {str(e)}'
+
+    def _answer_update_bhpc_template(self, employee, intent):
+        text = (self.cau_hoi or '').strip()
+        templates = self.env['bhpc.template'].search([])
+        for t in templates:
+            if t.name and t.name.lower() in text.lower():
+                employee.bhpc_template_id = t
+                return f'Đã áp dụng mẫu "{t.name}" cho nhân viên.'
+        if templates:
+            employee.bhpc_template_id = templates[0]
+            return f'Áp dụng mẫu mặc định "{templates[0].name}" cho nhân viên.'
+        return 'Không có mẫu BH/PC nào trong hệ thống để áp dụng.'
+
+    def _answer_list_contracts(self, employee):
+        contracts = self.env['danh_sach_hop_dong'].search([('nhan_vien_id', '=', employee.id)], limit=10)
+        if not contracts:
+            return 'Không tìm thấy hợp đồng nào cho nhân viên này.'
+        lines = []
+        for c in contracts:
+            end = c.ngay_ket_thuc.strftime('%d/%m/%Y') if c.ngay_ket_thuc else 'không xác định'
+            lines.append(f"{c.so_hop_dong}: {c.hop_dong_id.ten_hop_dong or ''} — {end} ({c.trang_thai})")
+        return 'Hợp đồng:\n' + '\n'.join(lines)
+
     def _answer_rule_based(self, employee):
         question = self._normalize(self.cau_hoi)
         month, year = self._get_period(self.cau_hoi)
@@ -501,6 +516,12 @@ Nếu phát hiện bất thường nghiệp vụ trong dữ liệu, nêu nhẹ l
             return self._answer_attendance(employee, month, year)
         if any(keyword in question for keyword in ['luong', 'thuc linh', 'thue', 'bao hiem']):
             return self._answer_salary(employee, month, year)
+        if any(keyword in question for keyword in ['gửi phiếu lương', 'gui phieu luong', 'gửi phiếu', 'gui phieu']):
+            return self._answer_send_payslip(employee, month, year)
+        if any(keyword in question for keyword in ['đổi mẫu', 'doi mau', 'áp dụng mẫu', 'ap dung mau', 'mẫu bh', 'mau bh']):
+            return self._answer_update_bhpc_template(employee, {'month': month, 'year': year})
+        if any(keyword in question for keyword in ['hợp đồng', 'hop dong', 'danh sách hợp đồng', 'liet ke hop dong']):
+            return self._answer_list_contracts(employee)
         if any(keyword in question for keyword in ['hop dong', 'het han']):
             return self._answer_contract(employee)
         if any(keyword in question for keyword in ['thuong', 'khen thuong']):
